@@ -1,4 +1,6 @@
 vendor/
 inspec.lock
 reports/
-input.yml
+input*yml
+*.tfstate
+.DS_Store
