@@ -4,7 +4,7 @@ maintainer: Cloud.gov
 copyright: 
 copyright_email: 
 license: CC0-1.0
-summary: Cloud.gov's Overlay Cind-Auditor Validation Profile for MySQL
+summary: Cloud.gov's Overlay Cinc-Auditor Validation Profile for MySQL
 version: 0.1.0
 inspec_version: ">= 4.0"
 
@@ -12,30 +12,5 @@ depends:
   - name: oracle-mysql-8-stig-baseline
     url: https://github.com/mitre/oracle-mysql-8-stig-baseline/archive/main.tar.gz
 
-inputs:
-  - name: user
-    description: 'username MySQL DB Server'
-    type: string
-    value: ''
-    sensitive: true
-    profile: oracle-mysql-8-stig-baseline
-
-  - name: password
-    description: 'password MySQL DB Server'
-    type: string
-    value: ''
-    sensitive: true
-    profile: oracle-mysql-8-stig-baseline
-
-  - name: host
-    description: 'hostname of MySQL DB Server'
-    value: ''
-    sensitive: true
-    profile: oracle-mysql-8-stig-baseline
-
-  - name: mysql_administrative_users
-    description: 'List of mysql administrative users'
-    type: array
-    value: ['root']
-    sensitive: true
-    profile: oracle-mysql-8-stig-baseline
+# inputs: # All inputs (e.g. user, password, audit_admins, aws_rds) are inherited
+#   from the baseline
