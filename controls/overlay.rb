@@ -1,4 +1,3 @@
-include_controls 'oracle-mysql-8-stig-baseline' do
 
 # SV-235139 - fix pending in Terraform with require_secure_transport
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/mysql-ssl-connections.require-ssl.html
@@ -9,11 +8,30 @@ include_controls 'oracle-mysql-8-stig-baseline' do
 # mysql> INSTALL PLUGIN validate_password SONAME 'validate_password.so';
 # Query OK, 0 rows affected, 1 warning (0.24 sec)
 
+include_controls 'oracle-mysql-8-stig-baseline' do
 
-#  control '1.2' do
-#    impact 0.0
-#    desc 'caveat', 'This is Not Applicable for our project since we have an approved risk-based decision on 10/1/2021 allowing use of root account for running mysql.'
-#    describe 'This is Not Applicable for our project since we have an approved risk-based decision on 10/1/2021 allowing use of root account for running mysql.' do
-#      skip 'This is Not Applicable for our project since we have an approved risk-based decision on 10/1/2021 allowing use of root account for running mysql.'
-#    end
-#  end
+# High controls
+	control 'SV-235095' do
+		desc 'caveat', 'This control has been satisfied outside the context of the MySQL STIG'
+		describe 'The implementation of this control, integration "with an organization-level
+		authentication/access mechanism providing account management and automation for
+		all users, groups, roles, and any other principals", is satisfied by our AC-2(1) control
+		as described in the Cloud.gov SSP. We leverage AWS IAM with Terraform Infrastructure as Code
+		and CredHub secrets management' do
+			skip 'This control is satisfied outside the context of MySQL auth'
+		end
+	end
+	control 'SV-235134' do
+		desc 'caveat', 'This control is N/A within AWS RDS'
+		describe 'The implementation of this control, "The
+		MySQL Database Server 8.0, when utilizing PKI-based
+		authentication, must validate certificates by
+		performing RFC 5280-compliant certification path
+		validation." is not applicable since PKI auth is not available
+		for AWS RDS per their documentation at 
+		https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/database-authentication.html.
+		FedRAMP has already accepted this implementation in AWS GovCloud' do
+			skip 'This control is not applicable'
+		end
+	end
+end
