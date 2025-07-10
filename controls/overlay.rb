@@ -1,12 +1,12 @@
 
-# SV-235139 - fix pending in Terraform with require_secure_transport
-# https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/mysql-ssl-connections.require-ssl.html
+## Works that still needs to be done
 # SV-253137 -  
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/MySQL.Concepts.PasswordValidationPlugin.html
 # Done:
 # mysql>
 # mysql> INSTALL PLUGIN validate_password SONAME 'validate_password.so';
 # Query OK, 0 rows affected, 1 warning (0.24 sec)
+
 
 include_controls 'oracle-mysql-8-stig-baseline' do
 
@@ -31,7 +31,7 @@ include_controls 'oracle-mysql-8-stig-baseline' do
 		for AWS RDS per their documentation at 
 		https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/database-authentication.html.
 		FedRAMP has already accepted this implementation in AWS GovCloud' do
-			skip 'This control is not applicable'
+			skip 'This control is not applicable within AWS RDS'
 		end
 	end
 end

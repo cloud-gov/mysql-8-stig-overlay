@@ -12,5 +12,13 @@ depends:
   - name: oracle-mysql-8-stig-baseline
     url: https://github.com/mitre/oracle-mysql-8-stig-baseline/archive/main.tar.gz
 
-# inputs: # All inputs (e.g. user, password, audit_admins, aws_rds) are inherited
-#   from the baseline
+# TODO: This setting does not seem be picked up, so
+# we are defining it in input.yml instead. Why it's not being
+# observed is probably a question for Aaron Lippold
+inputs:
+  - name: max_user_connections # SV-235096
+    description: 'max user connections allowed'
+    type: Numeric
+    value: 168
+    profile: oracle-mysql-8-stig-baseline
+

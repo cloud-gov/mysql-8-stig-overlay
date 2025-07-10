@@ -1,10 +1,9 @@
 #Description: username MySQL DB Server
 #Value Type: string
-user: USER
+user: mysql_stig
 
 #Description: password MySQL DB Server
 #Value Type: string
-password: not-actually-secret
 
 #Description: hostname of MySQL DB Server
 #Value Type:
@@ -14,13 +13,18 @@ host: 127.0.0.1
 #Value Type: numeric
 port: 3306
 
+#Description: AWS RDS
+#Value Type: boolean
+aws_rds: true
+
 #Description: Wildcard based path to list all audit log files
 #Value Type: string
-audit_log_path: /var/lib/mysql/audit*log*
+#N/A since all filesystem security is AWS RDS responsibility
+#audit_log_path: /var/lib/mysql/audit*log*
 
 #Description: List of documented audit admin accounts.
+#SV-235104 SV-235160 SV-235161 SV-235162
 #Value Type: array
-#audit_admins: ["'root'@'localhost'", "'root'@'%'"]
 audit_admins: ["'root'@'localhost'", "'root'@'%'"]
 
 #Description: Name of the documented server cert issuer.
@@ -29,11 +33,11 @@ dod_appoved_cert_issuer: DoD Root CA
 
 #Description: List of documented accounts exempted from PKI authentication.
 #Value Type: array
-pki_exception_users: ["my_user"]
+pki_exception_users: ["healthchecker"]
 
 #Description: List of documented accounts allowed to login with password.
 #Value Type: array
-authorized_password_users: ["my_user", "user"]
+authorized_password_users: ["my_user", "healthchecker"]
 
 #Description: List of documented mysql accounts with administrative previlleges.
 #Value Type: array
@@ -43,9 +47,6 @@ mysql_administrative_users: ["csb"]
 #Value Type: array
 mysql_administrative_grantees: ["'root'@'localhost'"]
 
-#Description: max user connections allowed
-#Value Type: numeric
-max_user_connections: 50
 
 #Description: List of approved Plugins
 #Value Type: array
@@ -87,3 +88,21 @@ authorized_functions: []
 #Description: Approved minimum version of MySQL
 #Value Type: string
 minimum_mysql_version: 8.0.25
+
+#Description: Name of organization running this profile
+# org_name: "Cloud.gov"
+org_name: "DOD"
+
+#Description: max user connections allowed
+# Value Type: numeric
+# Reference https://stigviewer.com/stigs/oracle_mysql_8.0/2024-09-04/finding/V-235096
+# Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html#RDS_Limits.MaxConnections
+# The control is written in the context of a multi-user MySQL instance, where setting 
+# a max_user_connections can help prevent any single user from DOS/resource exhaustion. 
+# But in our systems we generally have only a single user of a DB, so setting a max_user_connections
+# value that is too low may be the cause of DOS, not a preventative measure. AWS suggests that
+#    {DBInstanceClassMemory/12582880}
+#    The formula is effectively equivalent to MB/12.
+# so we're setting the max_user_connections to the highest possible value
+# for a `xlarge-gp-mysql` of 16 GB, or 16 GB * 1024 MB/GB / 12 (connetions per MB) =
+max_user_connections: 1365
