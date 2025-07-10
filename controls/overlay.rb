@@ -1,5 +1,5 @@
 
-## Works that still needs to be done
+## Work that still needs to be done
 # SV-253137 -  
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/MySQL.Concepts.PasswordValidationPlugin.html
 # Done:
