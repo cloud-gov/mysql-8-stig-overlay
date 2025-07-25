@@ -37,15 +37,15 @@ pki_exception_users: ["healthchecker"]
 
 #Description: List of documented accounts allowed to login with password.
 #Value Type: array
-authorized_password_users: ["mysql_stig", "rds_superuser_role"]
+authorized_password_users: ["csb", "mysql_stig", "rds_superuser_role"]
 
-#Description: List of documented mysql accounts with administrative previlleges.
+#Description: List of documented mysql accounts with administrative privileges.
 #Value Type: array
-mysql_administrative_users: ["csb"]
+mysql_administrative_users: ["csb", "mysql_stig", "rds_superuser_role"]
 
 #Description: List of documented mysql administrative role grantees
 #Value Type: array
-mysql_administrative_grantees: ["'root'@'localhost'"]
+mysql_administrative_grantees: ["'root'@'localhost'", "'rds_superuser_role'@'localhost'"]
 
 
 #Description: List of approved Plugins
@@ -66,7 +66,7 @@ mysql_ports:
 #Description: Authorized MySQL socket definitions
 #Value Type: Hash
 mysql_sockets:
-  socket: '/var/lib/mysql/mysql.sock'
+  socket: '/tmp/mysql.sock'
   mysqlx_socket: '/var/run/mysqld/mysqlx.sock'
 
 #Description: Location of the my.cnf file
@@ -87,7 +87,7 @@ authorized_functions: []
 
 #Description: Approved minimum version of MySQL
 #Value Type: string
-minimum_mysql_version: 8.0.25
+minimum_mysql_version: 8.0.40
 
 #Description: Name of organization running this profile
 # org_name: "Cloud.gov"
