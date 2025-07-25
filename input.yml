@@ -37,7 +37,7 @@ pki_exception_users: ["healthchecker"]
 
 #Description: List of documented accounts allowed to login with password.
 #Value Type: array
-authorized_password_users: ["my_user", "healthchecker"]
+authorized_password_users: ["mysql_stig", "rds_superuser_role"]
 
 #Description: List of documented mysql accounts with administrative previlleges.
 #Value Type: array
@@ -50,7 +50,7 @@ mysql_administrative_grantees: ["'root'@'localhost'"]
 
 #Description: List of approved Plugins
 #Value Type: array
-approved_plugins: ["audit_log"]
+approved_plugins: ["audit_log", "auth_socket", "SERVER_AUDIT"]
 
 #Description: List of approved components
 #Value Type: array
