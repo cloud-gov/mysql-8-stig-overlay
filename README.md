@@ -15,7 +15,44 @@ This assumes you're on a Cloud.gov dev workstation
 * Install `mysql-client` and `cinc-auditor`
 * Establish an SSH tunnel on localhost:3306 to remote_server:3306
 * Test `mysql` connection with `mysql -p -h 127.0.0.1 -u <USERNAME>` (and password)
-* Run Inspec: `cinc-auditor exec .  --show-progress --input-file input_local.yml  --reporter=cli json:reports/<FILE>.json`
+* Set an env variable MYSQL_PASSWORD
+* Run Inspec for the entire profile: 
+    ```
+		cinc-auditor exec .  --show-progress --input-file input.yml  \
+			--reporter=cli json:reports/$(date +'%Y-%m-%dH%H%M').json \
+			-input password="$MYSQL_PASSWORD"
+	```
+* Or run Inspec for a single control:
+    ```
+		cinc-auditor exec .  --show-progress --input-file input.yml  \
+			--reporter=cli json:reports/$(date +'%Y-%m-%dH%H%M').json \
+			-input password="$MYSQL_PASSWORD" --controls 'SV-235096'
+	```
+
+### Hints for PeterB
+
+Use the .tfstate file to get the credentials... for `mysql_db`
+
+```
+✦ ❯ cf_go dev
+cf switch dev
+
+✦ ❯ cf api
+API endpoint:   https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
+API version:    3.195.0
+
+✦ ❯ cf login --sso -o cloud-gov-operators -s peter.burkholder
+
+✦ ❯ cf ssh -L3306:development-xxxxxxx99C.cxxxxxxxxxy.us-gov-west-1.rds.amazonaws.com:3306 -N cinc-auditor
+```
+
+**In another term**
+
+```
+✦ ❯ mysql -p -h 127.0.0.1 -umysql_stig
+```
+
+
 
 Latest versions and installation options are available at the [InSpec](http://inspec.io/) site.
 
