@@ -34,4 +34,19 @@ include_controls 'oracle-mysql-8-stig-baseline' do
 			skip 'This control is not applicable within AWS RDS'
 		end
 	end
+	control 'SV-235136' do
+    impact 0.0
+		desc 'caveat', 'This control is N/A within AWS RDS'
+		describe 'This control, "The DOD standard for authentication is DOD-approved 
+		PKI certificates. Once a PKI certificate has been validated, it must be 
+		mapped to a Database Management System (DBMS) user account for the authenticated 
+		identity to be meaningful to the DBMS and useful for authorization decisions.",
+		is not applicable for the Cloud.gov system.
+		PKI auth is not available
+		for AWS RDS per their documentation at 
+		https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/database-authentication.html.
+		FedRAMP has already accepted this implementation in AWS GovCloud' do
+      skip 'This control is not applicable within AWS RDS'
+		end
+	end
 end

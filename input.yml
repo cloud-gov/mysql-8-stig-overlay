@@ -47,7 +47,6 @@ mysql_administrative_users: ["csb", "mysql_stig", "rds_superuser_role"]
 #Value Type: array
 mysql_administrative_grantees: ["'root'@'localhost'", "'rds_superuser_role'@'%'"]
 
-
 #Description: List of approved Plugins
 #Value Type: array
 approved_plugins: ["audit_log", "auth_socket", "SERVER_AUDIT"]
@@ -77,13 +76,41 @@ mycnf: /etc/my.cnf
 #Value Type: string
 mysqld_auto_cnf: /var/lib/mysql/auto.cnf
 
-#Description: Location of the mysqld-auto.cnf file
+#Description: Authorized procedures for SV-235180 
 #Value Type: array
-authorized_procedures: []
+# These are all included with AWS RDS
+authorized_procedures:  
+ - "rds_group_replication_advance_gtid"
+ - "rds_group_replication_create_user"
+ - "rds_group_replication_set_recovery_channel"
+ - "rds_group_replication_start"
+ - "rds_group_replication_stop"
+ - "rds_next_source_log_for_channel"
+ - "rds_reset_external_source_for_channel"
+ - "rds_set_external_source_for_channel"
+ - "rds_set_external_source_gtid_purged"
+ - "rds_set_external_source_with_auto_position_for_channel"
+ - "rds_set_external_source_with_delay_for_channel"
+ - "rds_set_source_auto_position_for_channel"
+ - "rds_set_source_delay_for_channel"
+ - "rds_show_upgrade_prechecks_status"
+ - "rds_show_upgrade_prechecks_summary"
+ - "rds_skip_repl_error_for_channel"
+ - "rds_start_replication_for_channel"
+ - "rds_start_replication_until_for_channel"
+ - "rds_start_replication_until_gtid_for_channel"
+ - "rds_start_upgrade_prechecks"
+ - "rds_stop_replication_for_channel"
+ - "rds_stop_upgrade_prechecks"
 
-#Description: Location of the mysqld-auto.cnf file
+
+#Description: Authorized functions for SV-235180 
 #Value Type: array
-authorized_functions: []
+# These are all included with AWS RDS
+authorized_functions: 
+  - "rds_is_semi_sync"
+  - "rds_replication_service_state"
+  - "rds_replication_service_state_for_channel"
 
 #Description: Approved minimum version of MySQL
 #Value Type: string
