@@ -59,22 +59,20 @@ include_controls 'oracle-mysql-8-stig-baseline' do
     max_user_connection_headroom = input('max_user_connection_headroom')
 
     sql_session = mysql_session(input('user'), input('password'), input('host'), input('port'))
-#
-#    global_max_connections_query = %(
-#    SELECT
-#      VARIABLE_NAME,
-#      VARIABLE_VALUE 
-#    FROM
-#      performance_schema.global_variables 
-#    WHERE
-#      VARIABLE_NAME LIKE 'max_connections' ;
-#    )
-#
-#    global_max_connections = sql_session.query(global_max_connections_query).results.column('variable_value')
-#
-    global_max_connections = 620
+
+    global_max_connections_query = %(
+    SELECT
+      VARIABLE_NAME,
+      VARIABLE_VALUE 
+    FROM
+      performance_schema.global_variables 
+    WHERE
+      VARIABLE_NAME LIKE 'max_connections' ;
+    )
+
+    global_max_connections = sql_session.query(global_max_connections_query).results.column('variable_value').first.to_i
     max_user_connection_limit = global_max_connections - max_user_connection_headroom
-#
+
     global_max_user_connections = %(
     SELECT
       VARIABLE_NAME,
