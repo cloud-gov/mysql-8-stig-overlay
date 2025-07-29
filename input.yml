@@ -132,4 +132,6 @@ org_name: "DOD"
 #    The formula is effectively equivalent to MB/12.
 # so we're setting the max_user_connections to the highest possible value
 # for a `xlarge-gp-mysql` of 16 GB, or 16 GB * 1024 MB/GB / 12 (connetions per MB) =
-max_user_connections: 1365
+#max_user_connections: 1365
+# max_user_connection_fraction: 0.9
+max_user_connection_headroom: 10
