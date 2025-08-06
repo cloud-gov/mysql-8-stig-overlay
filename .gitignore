@@ -3,3 +3,4 @@ inspec.lock
 reports/
 *.tfstate
 .DS_Store
+input.yml
