@@ -37,7 +37,7 @@ Auditing is currently done on-demand from a Cloud.gov platform operator's workst
 * Update `input.yml` with the `user` and `password`. Be sure to 
   * set strict file permissions
   * prevent commiting the file to Git
-  * delete the file when your work is donw
+  * delete the file when your work is done
 * Run `cinc-auditor` for the profile:
 
 ```sh
