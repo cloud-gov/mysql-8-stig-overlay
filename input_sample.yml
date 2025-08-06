@@ -38,11 +38,11 @@ pki_exception_users: ["healthchecker"]
 
 #Description: List of documented accounts allowed to login with password.
 #Value Type: array
-authorized_password_users: ["csb", "mysql_stig", "rds_superuser_role"]
+authorized_password_users: ["csb", "rds_superuser_role"]
 
 #Description: List of documented mysql accounts with administrative privileges.
 #Value Type: array
-mysql_administrative_users: ["csb", "mysql_stig", "rds_superuser_role"]
+mysql_administrative_users: ["csb", "rds_superuser_role"]
 
 #Description: List of documented mysql administrative role grantees
 #Value Type: array

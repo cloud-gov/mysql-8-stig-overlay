@@ -36,7 +36,6 @@ Auditing is currently done on-demand from a Cloud.gov platform operator's workst
 * Copy `input_sample.yml` to `input.yml`
 * Update `input.yml` with the `user` and `password`. Be sure to 
   * set strict file permissions
-  * prevent commiting the file to Git
   * delete the file when your work is done
 * Run `cinc-auditor` for the profile:
 
@@ -58,7 +57,6 @@ cinc-auditor exec .  --show-progress --input-file input.yml  \
 The JSON results output file can be loaded into __[heimdall-lite](https://github.com/mitre/heimdall2/)__ for a user-interactive, graphical view of the InSpec results. For local usage:
 
 ```shell
-npm install -g @mitre/heimdall-lite
 npx @mitre/heimdall-lite &
 ```
 
