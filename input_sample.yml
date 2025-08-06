@@ -1,0 +1,135 @@
+#Description: username MySQL DB Server
+#Value Type: string
+user: <user>
+
+#Description: password MySQL DB Server
+#Value Type: string
+password: <password>
+
+#Description: hostname of MySQL DB Server
+#Value Type:
+host: 127.0.0.1
+
+#Description: port MySQL DB Server
+#Value Type: numeric
+port: 3306
+
+#Description: AWS RDS
+#Value Type: boolean
+aws_rds: true
+
+#Description: Wildcard based path to list all audit log files
+#Value Type: string
+#N/A since all filesystem security is AWS RDS responsibility
+#audit_log_path: /var/lib/mysql/audit*log*
+
+#Description: List of documented audit admin accounts.
+#SV-235104 SV-235160 SV-235161 SV-235162
+#Value Type: array
+audit_admins: ["'root'@'localhost'", "'root'@'%'"]
+
+#Description: Name of the documented server cert issuer.
+#Value Type: string
+dod_appoved_cert_issuer: DoD Root CA
+
+#Description: List of documented accounts exempted from PKI authentication.
+#Value Type: array
+pki_exception_users: ["healthchecker"]
+
+#Description: List of documented accounts allowed to login with password.
+#Value Type: array
+authorized_password_users: ["csb", "mysql_stig", "rds_superuser_role"]
+
+#Description: List of documented mysql accounts with administrative privileges.
+#Value Type: array
+mysql_administrative_users: ["csb", "mysql_stig", "rds_superuser_role"]
+
+#Description: List of documented mysql administrative role grantees
+#Value Type: array
+mysql_administrative_grantees: ["'root'@'localhost'", "'rds_superuser_role'@'%'"]
+
+#Description: List of approved Plugins
+#Value Type: array
+approved_plugins: ["audit_log", "auth_socket", "SERVER_AUDIT"]
+
+#Description: List of approved components
+#Value Type: array
+approved_components: ["file://component_validate_password"]
+
+#Description: Authorized MySQL port definitions
+#Value Type: Hash
+mysql_ports:
+  port: 3306
+  admin_port: 33062
+  mysqlx_port: 33060
+
+#Description: Authorized MySQL socket definitions
+#Value Type: Hash
+mysql_sockets:
+  socket: '/tmp/mysql.sock'
+  mysqlx_socket: '/var/run/mysqld/mysqlx.sock'
+
+#Description: Location of the my.cnf file
+#Value Type: string
+mycnf: /etc/my.cnf
+
+#Description: Location of the mysqld-auto.cnf file
+#Value Type: string
+mysqld_auto_cnf: /var/lib/mysql/auto.cnf
+
+#Description: Authorized procedures for SV-235180 
+#Value Type: array
+# These are all included with AWS RDS
+authorized_procedures:  
+ - "rds_group_replication_advance_gtid"
+ - "rds_group_replication_create_user"
+ - "rds_group_replication_set_recovery_channel"
+ - "rds_group_replication_start"
+ - "rds_group_replication_stop"
+ - "rds_next_source_log_for_channel"
+ - "rds_reset_external_source_for_channel"
+ - "rds_set_external_source_for_channel"
+ - "rds_set_external_source_gtid_purged"
+ - "rds_set_external_source_with_auto_position_for_channel"
+ - "rds_set_external_source_with_delay_for_channel"
+ - "rds_set_source_auto_position_for_channel"
+ - "rds_set_source_delay_for_channel"
+ - "rds_show_upgrade_prechecks_status"
+ - "rds_show_upgrade_prechecks_summary"
+ - "rds_skip_repl_error_for_channel"
+ - "rds_start_replication_for_channel"
+ - "rds_start_replication_until_for_channel"
+ - "rds_start_replication_until_gtid_for_channel"
+ - "rds_start_upgrade_prechecks"
+ - "rds_stop_replication_for_channel"
+ - "rds_stop_upgrade_prechecks"
+
+
+#Description: Authorized functions for SV-235180 
+#Value Type: array
+# These are all included with AWS RDS
+authorized_functions: 
+  - "rds_is_semi_sync"
+  - "rds_replication_service_state"
+  - "rds_replication_service_state_for_channel"
+
+#Description: Approved minimum version of MySQL
+#Value Type: string
+minimum_mysql_version: 8.0.40
+
+#Description: Name of organization running this profile
+# org_name: "Cloud.gov"
+org_name: "DOD"
+
+#Description: max user connections allowed
+# Value Type: numeric
+# Reference https://stigviewer.com/stigs/oracle_mysql_8.0/2024-09-04/finding/V-235096
+# Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html#RDS_Limits.MaxConnections
+# The control is written in the context of a multi-user MySQL instance, where setting 
+# a max_user_connections can help prevent any single user from DOS/resource exhaustion. 
+#
+# But in our systems we generally have only a single user of a DB, so setting a max_user_connections
+# value that is too low may be the cause of DOS, not a preventative measure. 
+# Our policy for SV-235096 is that max_user_connections should be 
+# set to ensure some "headroom" for administrative connections
+max_user_connection_headroom: 10

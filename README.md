@@ -1,74 +1,66 @@
 # Cloud.gov MySQL STIG Compliance Overlay
 
-Cloud.gov overlay for the baseline InSpec profile at <https://github.com/mitre/oracle-mysql-8-stig-baseline/> with modifications based on Cloud.gov's different policy compliance requirements.
+Cloud.gov overlay for the baseline InSpec profile at <https://github.com/mitre/oracle-mysql-8-stig-baseline/> with modifications based on Cloud.gov's policy and compliance requirements.
 
-The original baseline InSpec profile is used to validate the secure configuration of Oracle MySQL 8.x exactly against the requirements in Oracle MySQL 8.0 against DISA's Oracle MySQL 8.0 (STIG) Version 1 Release 1.
+The baseline InSpec profile is used to validate the secure configuration of Oracle MySQL 8.x exactly against DISA's Oracle MySQL 8.0 (STIG) Version 1 Release 1.
 
-This Overlay profile clearly distinguishes and measures to OUR policy requirements without modification to the baseline profile or misrepresentation that we are exactly compliant with the original Benchmark. This overlay allows us to show compliance with our own vetted requirements.
+This Overlay profile clearly distinguishes and measures compliance to OUR policy requirements without modification to the baseline profile or misrepresentation that we are exactly compliant with the original Benchmark. This overlay allows us to show compliance with our own vetted requirements.
 
-This is based on upstream work at <https://github.com/mitre/sample-mysql-overlay>
+This overlay work is based on upstream work at <https://github.com/mitre/sample-mysql-overlay>.
 
-## Getting Started - Development 
+For this work we use the open-source `cinc-auditor` from the [Cinc Project](https://cinc.sh), derived from [Chef InSpec](https://docs.chef.io/inspec/).
 
-This assumes you're on a Cloud.gov dev workstation
+## About the Overlay
+
+The Cloud.gov customizations are in `./controls/overlay.rb`. We've determined that serveral are "Not Applicable" in our environment, so we have set `impact: 0.0`.
+
+## About the implementation
+
+See the following code in our [Terraform provisioning](https://github.com/cloud-gov/terraform-provision) repository:
+
+* [Module `rds_stig`](https://github.com/cloud-gov/terraform-provision/tree/main/terraform/modules/rds_stig)
+* [Script to run MySQL SQL commands](https://github.com/cloud-gov/terraform-provision/blob/main/ci/scripts/create-and-update-mysql.sh)
+
+## Testing this overlay against an existing AWS RDS DB in Cloud.gov
+
+Auditing is currently done on-demand from a Cloud.gov platform operator's workstation.  Running as part of CI/CD is a future implementation step (as of 2025-08-06).  Assuming you're on a Cloud.gov dev workstation:
 
 * Install `mysql-client` and `cinc-auditor`
-* Establish an SSH tunnel on localhost:3306 to remote_server:3306
-* Test `mysql` connection with `mysql -p -h 127.0.0.1 -u <USERNAME>` (and password)
-* Set an env variable MYSQL_PASSWORD
-* Run Inspec for the entire profile: 
-    ```
-		cinc-auditor exec .  --show-progress --input-file input.yml  \
-			--reporter=cli json:reports/$(date +'%Y-%m-%dH%H%M').json \
-			-input password="$MYSQL_PASSWORD"
-	```
-* Or run Inspec for a single control:
-    ```
-		cinc-auditor exec .  --show-progress --input-file input.yml  \
-			--reporter=cli json:reports/$(date +'%Y-%m-%dH%H%M').json \
-			-input password="$MYSQL_PASSWORD" --controls 'SV-235096'
-	```
+  * e.g. `brew install cinc-workstation; brew install mysql-client`
+  * note: We have requested that corporate policies allow access to downloads.cinc.sh, but that may not yet have happened.
+* The next steps are fully described in <https://github.com/cloud.gov/internal-docs>:
+  * Obtain the MySQL database hostname, username, and password
+  * Establish an SSH tunnel from localhost:3306 to remote_server:3306
+  * Test `mysql` connection with `mysql -p -h 127.0.0.1 -u <USERNAME>` (and password)
+  * Note: **DO NOT** use `mysql -p$PASSWORD -h 127.0.0.1 -u <USERNAME>` as the passwords will be visible in the system process list.
+* Copy `input_sample.yml` to `input.yml`
+* Update `input.yml` with the `user` and `password`. Be sure to 
+  * set strict file permissions
+  * prevent commiting the file to Git
+  * delete the file when your work is donw
+* Run `cinc-auditor` for the profile:
 
-### Hints for PeterB
-
-Use the .tfstate file to get the credentials... for `mysql_db`
-
-```
-✦ ❯ cf_go dev
-cf switch dev
-
-✦ ❯ cf api
-API endpoint:   https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
-API version:    3.195.0
-
-✦ ❯ cf login --sso -o cloud-gov-operators -s peter.burkholder
-
-✦ ❯ cf ssh -L3306:development-xxxxxxx99C.cxxxxxxxxxy.us-gov-west-1.rds.amazonaws.com:3306 -N cinc-auditor
+```sh
+cinc-auditor exec .  --show-progress --input-file input.yml  \
+ --reporter=cli json:reports/$(date +'%Y-%m-%dH%H%M').json 
 ```
 
-**In another term**
+* Or run `cinc-auditor` for a single control, e.g.:
 
+```sh
+cinc-auditor exec .  --show-progress --input-file input.yml  \
+  --reporter=cli json:reports/$(date +'%Y-%m-%dH%H%M').json \
+  --controls 'SV-235096'
 ```
-✦ ❯ mysql -p -h 127.0.0.1 -umysql_stig
-```
-
-
-
-Latest versions and installation options are available at the [InSpec](http://inspec.io/) site.
-
-## Tailoring to Your Environment
-
-The following inputs may be configured in an inputs ".yml" file for the profile to run correctly for your specific environment. More information about InSpec inputs can be found in the [InSpec Profile Documentation](https://www.inspec.io/docs/reference/profiles/).
-
--- SEE <https://github.com/mitre/oracle-mysql-8-stig-baseline/tree/main?tab=readme-ov-file#tailoring-to-your-environment>
 
 ## Using Heimdall for Viewing the JSON Results
 
-The JSON results output file can be loaded into __[heimdall-lite](https://heimdall-lite.mitre.org/)__ for a user-interactive, graphical view of the InSpec results. For local usage:
+The JSON results output file can be loaded into __[heimdall-lite](https://github.com/mitre/heimdall2/)__ for a user-interactive, graphical view of the InSpec results. For local usage:
 
 ```shell
 npm install -g @mitre/heimdall-lite
 npx @mitre/heimdall-lite &
 ```
 
-In Finder, you can then drag the `.json` results into the viewer and get to work on stomping out the variations.
+The Heimdall-Lite interface will be available at <http://localhost:8080>. From the
+Finder, you can then drag the `.json` results into the viewer to see if there are any variations from our standards.
