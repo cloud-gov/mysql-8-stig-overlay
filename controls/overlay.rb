@@ -1,3 +1,4 @@
+
 include_controls 'oracle-mysql-8-stig-baseline' do
 
 # High controls
