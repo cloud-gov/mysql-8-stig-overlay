@@ -5,7 +5,7 @@ copyright:
 copyright_email: 
 license: CC0-1.0
 summary: Cloud.gov's Overlay Cinc-Auditor Validation Profile for MySQL
-version: 0.1.0
+version: 1.0.0
 inspec_version: ">= 4.0"
 
 depends:
