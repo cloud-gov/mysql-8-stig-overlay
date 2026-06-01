@@ -1,0 +1,22 @@
+# Use this for basic testing of MySQL auditing with
+#   docker-compose up -d
+# then test cinc-auditor with
+#   docker run --network mysql-8-stig-overlay_app-network -v $(pwd):/share cinc-mysql exec . --input-file input_docker.yml
+#
+# Note: Most tests will fail, that's OK
+
+services:
+  mysql-docker:
+    image: mysql:8.0
+    container_name: mysql-docker
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: pickles
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge

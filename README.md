@@ -63,3 +63,16 @@ npx @mitre/heimdall-lite &
 ```
 
 The Heimdall-Lite interface will be available at <http://localhost:8080>. From the Finder, you can then drag the `.json` results into the viewer to see if there are any variations from our standards.
+
+## Using Dockerized MySQL for local validation
+
+Quick start:
+
+```
+# Start a MySQL Server:
+docker-compose up -d
+
+# Build and run a Cinc Auditor:
+docker build --platform=linux/arm64 -t cinc-mysql .
+docker run --network mysql-8-stig-overlay_app-network -v $(pwd):/share cinc-mysql exec . --input-file input_docker.yml
+```
