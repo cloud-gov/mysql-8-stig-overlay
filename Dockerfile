@@ -7,10 +7,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Manage ZScaler certs for GSA envs
-
-#RUN if [ x"${BUILD_ENV}" = x"LOCAL" ] ; then cp /tmp/zscaler.crt /usr/local/share/ca-certificates/zscaler.crt ; update-ca-certificates ; fi
-COPY .docker/zscaler_cert.pem /tmp/zscaler-root-ca.crt
-RUN cp /tmp/zscaler-root-ca.crt /usr/local/share/ca-certificates/zscaler.crt && update-ca-certificates
+COPY .docker/zscaler_cert_pem.txt /tmp/zscaler-root-ca.crt
+RUN cp /tmp/zscaler-root-ca.crt /usr/local/share/ca-certificates/zscaler.crt && \
+    update-ca-certificates
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
 
