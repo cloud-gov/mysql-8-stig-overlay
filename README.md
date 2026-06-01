@@ -18,47 +18,61 @@ The Cloud.gov customizations are in `./controls/overlay.rb`. We've determined th
 
 See the following code in our [Terraform provisioning](https://github.com/cloud-gov/terraform-provision) repository:
 
-* [Module `rds_stig`](https://github.com/cloud-gov/terraform-provision/tree/main/terraform/modules/rds_stig)
-* [Script to run MySQL SQL commands](https://github.com/cloud-gov/terraform-provision/blob/main/ci/scripts/create-and-update-mysql.sh)
+- [Module `rds_stig`](https://github.com/cloud-gov/terraform-provision/tree/main/terraform/modules/rds_stig)
+- [Script to run MySQL SQL commands](https://github.com/cloud-gov/terraform-provision/blob/main/ci/scripts/create-and-update-mysql.sh)
 
 ## Testing this overlay against an existing AWS RDS DB in Cloud.gov
 
-Auditing is currently done on-demand from a Cloud.gov platform operator's workstation.  Running as part of CI/CD is a future implementation step (as of 2025-08-06).  Assuming you're on a Cloud.gov dev workstation:
+Auditing is currently done on-demand from a Cloud.gov platform operator's workstation. Running as part of CI/CD is a future implementation step (as of 2025-08-06). Assuming you're on a Cloud.gov dev workstation:
 
-* Install `mysql-client` and `cinc-auditor`
-  * e.g. `brew install cinc-workstation; brew install mysql-client`
-  * note: We have requested that corporate policies allow access to downloads.cinc.sh, but that may not yet have happened.
-* The next steps are fully described in <https://github.com/cloud.gov/internal-docs>:
-  * Obtain the MySQL database hostname, username, and password
-  * Establish an SSH tunnel from localhost:3306 to remote_server:3306
-  * Test `mysql` connection with `mysql -p -h 127.0.0.1 -u <USERNAME>` (and password)
-  * Note: **DO NOT** use `mysql -p$PASSWORD -h 127.0.0.1 -u <USERNAME>` as the passwords will be visible in the system process list.
-* Copy `input_sample.yml` to `input.yml`
-* Update `input.yml` with the `user` and `password`. Be sure to 
-  * set strict file permissions
-  * delete the file when your work is done
-* Run `cinc-auditor` for the profile:
+- Build a Docker image, `cinc-mysql`, with the MySQL client installed:
+  ```sh
+  docker build --platform=linux/arm64 -t cinc-mysql .
+  ```
+- Obtain the MySQL database hostname, username, and password
+- Establish an SSH tunnel from localhost:3306 to remote_server:3306
+- Test `mysql` connection with `mysql -p -h 127.0.0.1 -u <USERNAME>` (and password)
+- Note: **DO NOT** use `mysql -p$PASSWORD -h 127.0.0.1 -u <USERNAME>` as the passwords will be visible in the system process list.
+- Copy `input_sample.yml` to `input.yml`
+- Update `input.yml` with the `user` and `password`. Be sure to
+  - set strict file permissions
+  - delete the file when your work is done
+- Run `cinc-auditor` for the profile:
 
-```sh
-cinc-auditor exec .  --show-progress --input-file input.yml  \
- --reporter=cli json:reports/$(date +'%Y-%m-%dH%H%M').json 
-```
+  ```sh
+  docker run -v $(pwd):/share cinc-mysql exec . \
+    --show-progress --input-file input.yml  \
+    --reporter=cli json:reports/$(date +'%Y-%m-%dH%H%M').json
+  ```
 
-* Or run `cinc-auditor` for a single control, e.g.:
+- Or run `cinc-auditor` for a single control, e.g.:
 
-```sh
-cinc-auditor exec .  --show-progress --input-file input.yml  \
-  --reporter=cli json:reports/$(date +'%Y-%m-%dH%H%M').json \
-  --controls 'SV-235096'
-```
+  ```sh
+  docker run -v $(pwd):/share cinc-mysql exec . \
+    --show-progress --input-file input.yml \
+    --reporter=cli json:reports/$(date +'%Y-%m-%dH%H%M').json \
+    --controls 'SV-235096'
+  ```
 
 ## Using Heimdall for Viewing the JSON Results
 
-The JSON results output file can be loaded into __[heimdall-lite](https://github.com/mitre/heimdall2/)__ for a user-interactive, graphical view of the InSpec results. For local usage:
+The JSON results output file can be loaded into **[heimdall-lite](https://github.com/mitre/heimdall2/)** for a user-interactive, graphical view of the InSpec results. For local usage:
 
 ```shell
 npx @mitre/heimdall-lite &
 ```
 
-The Heimdall-Lite interface will be available at <http://localhost:8080>. From the
-Finder, you can then drag the `.json` results into the viewer to see if there are any variations from our standards.
+The Heimdall-Lite interface will be available at <http://localhost:8080>. From the Finder, you can then drag the `.json` results into the viewer to see if there are any variations from our standards.
+
+## Using Dockerized MySQL for local validation
+
+Quick start:
+
+```
+# Start a MySQL Server:
+docker-compose up -d
+
+# Build and run a Cinc Auditor:
+docker build --platform=linux/arm64 -t cinc-mysql .
+docker run --network mysql-8-stig-overlay_app-network -v $(pwd):/share cinc-mysql exec . --input-file input_docker.yml
+```
