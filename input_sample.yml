@@ -6,9 +6,13 @@ user: <user>
 #Value Type: string
 password: <password>
 
-#Description: hostname of MySQL DB Server
+#Description: hostname of MySQL DB Server. When using an 
+# SSH tunnel on the host, this 127.0.0.1. When the Cinc-auditor
+# process is running as a container on that host, then
+# use `host.docker.internal` (or podman equivalent).
 #Value Type:
-host: 127.0.0.1
+# host: 127.0.0.1
+host: host.docker.internal
 
 #Description: port MySQL DB Server
 #Value Type: numeric
